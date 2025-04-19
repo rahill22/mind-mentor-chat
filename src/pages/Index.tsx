@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { ChatHeader } from "@/components/ChatHeader";
 import { ChatInput } from "@/components/ChatInput";
 import { ChatMessage } from "@/components/ChatMessage";
-import { Disclaimer } from "@/components/Disclaimer";
+import { EmergencyContacts } from "@/components/EmergencyContacts";
 import { generateBotResponse } from "@/utils/chatbot";
 
 export type Message = {
@@ -90,7 +90,7 @@ const Index = () => {
         </div>
         
         <ChatInput onSendMessage={handleSendMessage} isTyping={isTyping} />
-        <Disclaimer />
+        <EmergencyContacts />
       </main>
     </div>
   );
