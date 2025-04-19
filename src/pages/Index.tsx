@@ -1,10 +1,10 @@
-
 import { useState, useRef, useEffect } from "react";
 import { ChatHeader } from "@/components/ChatHeader";
 import { ChatInput } from "@/components/ChatInput";
 import { ChatMessage } from "@/components/ChatMessage";
 import { EmergencyContacts } from "@/components/EmergencyContacts";
-import { generateBotResponse } from "@/utils/chatbot";
+import { ApiKeyInput } from "@/components/ApiKeyInput";
+import { generateBotResponse, getOpenAiKey } from "@/utils/chatbot";
 
 export type Message = {
   id: string;
@@ -17,7 +17,9 @@ const Index = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
-      content: "Hello, I'm Dr. MindMentor, a virtual assistant designed to provide mental health support. How are you feeling today?",
+      content: getOpenAiKey() 
+        ? "Hello, I'm Dr. MindMentor, an AI assistant designed to provide mental health support. How are you feeling today?"
+        : "Please provide your OpenAI API key to begin our conversation.",
       sender: "bot",
       timestamp: new Date(),
     },
@@ -68,6 +70,7 @@ const Index = () => {
       <ChatHeader />
       
       <main className="flex-1 container mx-auto max-w-4xl p-4 flex flex-col">
+        <ApiKeyInput />
         <div className="flex-1 overflow-y-auto mb-4 rounded-lg bg-white shadow-sm p-4 chat-container">
           <div className="space-y-4">
             {messages.map((message) => (

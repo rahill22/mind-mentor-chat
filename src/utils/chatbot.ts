@@ -1,103 +1,74 @@
 
 import { Message } from "@/pages/Index";
+import { toast } from "sonner";
 
-// Response templates for different types of mental health concerns
-const responseTemplates = {
-  anxiety: [
-    "It sounds like you might be experiencing some anxiety. This is a common feeling that many people face. Can you tell me more about what triggers these feelings for you?",
-    "Anxiety can manifest in both physical and emotional symptoms. Have you noticed any patterns in when these feelings arise?",
-    "Some people find that deep breathing exercises can help manage anxiety in the moment. Would you like me to suggest some techniques you could try?",
-    "It's important to acknowledge that anxiety is a normal human response, though it can become overwhelming. How long have you been experiencing these feelings?"
-  ],
-  
-  depression: [
-    "I'm hearing that you might be experiencing some symptoms of depression. Thank you for sharing that with me. How long have you been feeling this way?",
-    "Depression can affect various aspects of life including sleep, appetite, and energy levels. Have you noticed changes in any of these areas?",
-    "Small steps can sometimes help when dealing with depression. Setting tiny, achievable goals each day might be a place to start. What's one small thing you could do today?",
-    "Connection with others can be important when feeling depressed, though it can also be one of the hardest things to do. Is there someone in your life you feel comfortable reaching out to?"
-  ],
-  
-  stress: [
-    "Managing stress effectively is important for both mental and physical health. What strategies have you tried in the past to help with stress?",
-    "Stress can be particularly challenging when it feels constant. Are there specific situations or times when you feel more stressed?",
-    "Sometimes adjusting our perspective on stressors can help manage them better. Would it be helpful to explore different ways of thinking about your current situation?",
-    "Creating boundaries and taking time for self-care are important aspects of stress management. How do you currently make time for yourself?"
-  ],
-  
-  sleep: [
-    "Sleep difficulties can have a significant impact on mental health. Can you tell me more about the problems you're experiencing with sleep?",
-    "Establishing a consistent sleep routine can sometimes help improve sleep quality. What does your current bedtime routine look like?",
-    "There are several relaxation techniques that people find helpful for sleep. Would you like to discuss some options that might work for you?",
-    "The environment we sleep in can affect our quality of sleep. Have you considered making any adjustments to your sleep environment?"
-  ],
-  
-  general: [
-    "Thank you for sharing that with me. How long have you been feeling this way?",
-    "It sounds like you're going through a challenging time. What kinds of things have helped you cope with difficulties in the past?",
-    "Taking care of our mental health is just as important as our physical health. Have you been able to make time for self-care activities that you enjoy?",
-    "Sometimes talking to someone about our feelings can help provide perspective. Do you have people in your life you feel comfortable opening up to?",
-    "I appreciate you trusting me with these feelings. Would it be helpful to explore some coping strategies together?"
-  ]
+let openAiKey: string | null = null;
+
+const systemPrompt = `You are Dr. MindMentor, a supportive and empathetic AI mental health assistant. Your responses should be:
+- Compassionate and understanding
+- Professional but warm
+- Focused on listening and providing support
+- Clear about being an AI assistant who can provide support but not medical advice
+- Brief and focused (keep responses to 2-3 sentences when possible)`;
+
+export const setOpenAiKey = (key: string) => {
+  openAiKey = key;
+  // Store in localStorage for persistence
+  localStorage.setItem('openai_key', key);
 };
 
-// Keywords to help identify the type of concern
-const keywordCategories = {
-  anxiety: ["anxious", "anxiety", "worry", "panic", "stressed", "nervous", "fear", "overwhelm"],
-  depression: ["depress", "sad", "hopeless", "unmotivated", "tired", "exhausted", "empty", "worthless"],
-  stress: ["stress", "overwhelm", "pressure", "burnout", "work", "deadline", "tension"],
-  sleep: ["sleep", "insomnia", "tired", "fatigue", "dream", "nightmare", "awake", "rest"]
-};
-
-// Function to identify the likely category based on user message
-const identifyCategory = (message: string): keyof typeof responseTemplates => {
-  const lowerMessage = message.toLowerCase();
-  
-  for (const [category, keywords] of Object.entries(keywordCategories)) {
-    if (keywords.some(keyword => lowerMessage.includes(keyword))) {
-      return category as keyof typeof responseTemplates;
-    }
+export const getOpenAiKey = () => {
+  if (!openAiKey) {
+    openAiKey = localStorage.getItem('openai_key');
   }
-  
-  return "general";
+  return openAiKey;
 };
 
-// Main function to generate bot responses
 export const generateBotResponse = async (
-  userMessage: string, 
+  userMessage: string,
   conversationHistory: Message[]
 ): Promise<string> => {
-  // Identify the category of concern
-  const category = identifyCategory(userMessage);
+  const key = getOpenAiKey();
   
-  // Select a random response from the appropriate category
-  const responses = responseTemplates[category];
-  let response = responses[Math.floor(Math.random() * responses.length)];
-  
-  // Add personalized elements if this isn't the first exchange
-  if (conversationHistory.length > 2) {
-    const userMessages = conversationHistory.filter(msg => msg.sender === "user");
-    
-    // If user has sent multiple messages, occasionally reference previous conversation
-    if (userMessages.length > 1 && Math.random() > 0.7) {
-      response = `Based on what you've shared so far, ${response.toLowerCase()}`;
-    }
-    
-    // Add therapeutic acknowledgment occasionally
-    if (Math.random() > 0.5) {
-      const acknowledgments = [
-        "I appreciate you sharing that with me. ",
-        "Thank you for being open about this. ",
-        "It takes courage to discuss these feelings. "
-      ];
-      const acknowledgment = acknowledgments[Math.floor(Math.random() * acknowledgments.length)];
-      response = acknowledgment + response;
-    }
+  if (!key) {
+    return "Please provide your OpenAI API key first to enable AI responses.";
   }
-  
-  // Occasionally add a reminder about the chatbot's limitations
-  if (Math.random() > 0.9) {
-    response += " Remember, I'm here to support you, but connecting with a mental health professional can provide more personalized guidance.";
+
+  try {
+    const messages = [
+      { role: "system", content: systemPrompt },
+      ...conversationHistory.map(msg => ({
+        role: msg.sender === "user" ? "user" : "assistant",
+        content: msg.content
+      })),
+      { role: "user", content: userMessage }
+    ];
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${key}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'gpt-4-turbo-preview',
+        messages,
+        temperature: 0.7,
+        max_tokens: 150
+      })
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error?.message || 'Failed to get response from OpenAI');
+    }
+
+    const data = await response.json();
+    return data.choices[0].message.content;
+
+  } catch (error) {
+    console.error('Error generating response:', error);
+    toast.error('Failed to generate response. Please check your API key.');
+    return "I apologize, but I encountered an error generating a response. Please check your API key or try again later.";
   }
-  
-  return response;
 };
