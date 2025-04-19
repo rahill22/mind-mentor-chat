@@ -1,39 +1,18 @@
 
-import { Message } from "@/pages/Index";
-import { toast } from "sonner";
-
-let openAiKey: string | null = null;
-
 const systemPrompt = `You are Dr. MindMentor, a supportive and empathetic AI mental health assistant. Your responses should be:
 - Compassionate and understanding
 - Professional but warm
 - Focused on listening and providing support
-- Clear about being an AI assistant who can provide support but not medical advice
+- Clear about being an AI assistant who can provide medical advice
 - Brief and focused (keep responses to 2-3 sentences when possible)`;
 
-export const setOpenAiKey = (key: string) => {
-  openAiKey = key;
-  // Store in localStorage for persistence
-  localStorage.setItem('openai_key', key);
-};
-
-export const getOpenAiKey = () => {
-  if (!openAiKey) {
-    openAiKey = localStorage.getItem('openai_key');
-  }
-  return openAiKey;
-};
+// Using a hardcoded API key (this is not recommended for production)
+const OPENAI_API_KEY = 'YOUR_OPENAI_API_KEY_HERE';
 
 export const generateBotResponse = async (
   userMessage: string,
   conversationHistory: Message[]
 ): Promise<string> => {
-  const key = getOpenAiKey();
-  
-  if (!key) {
-    return "Please provide your OpenAI API key first to enable AI responses.";
-  }
-
   try {
     const messages = [
       { role: "system", content: systemPrompt },
@@ -47,7 +26,7 @@ export const generateBotResponse = async (
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${key}`,
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -68,7 +47,6 @@ export const generateBotResponse = async (
 
   } catch (error) {
     console.error('Error generating response:', error);
-    toast.error('Failed to generate response. Please check your API key.');
-    return "I apologize, but I encountered an error generating a response. Please check your API key or try again later.";
+    return "I apologize, but I encountered an error generating a response. Please try again later.";
   }
 };

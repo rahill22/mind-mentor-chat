@@ -3,8 +3,7 @@ import { ChatHeader } from "@/components/ChatHeader";
 import { ChatInput } from "@/components/ChatInput";
 import { ChatMessage } from "@/components/ChatMessage";
 import { EmergencyContacts } from "@/components/EmergencyContacts";
-import { ApiKeyInput } from "@/components/ApiKeyInput";
-import { generateBotResponse, getOpenAiKey } from "@/utils/chatbot";
+import { generateBotResponse } from "@/utils/chatbot";
 
 export type Message = {
   id: string;
@@ -17,9 +16,7 @@ const Index = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
-      content: getOpenAiKey() 
-        ? "Hello, I'm Dr. MindMentor, an AI assistant designed to provide mental health support. How are you feeling today?"
-        : "Please provide your OpenAI API key to begin our conversation.",
+      content: "Hello, I'm Dr. MindMentor, an AI assistant designed to provide mental health support. How are you feeling today?",
       sender: "bot",
       timestamp: new Date(),
     },
@@ -38,7 +35,6 @@ const Index = () => {
   const handleSendMessage = async (content: string) => {
     if (!content.trim()) return;
 
-    // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
       content: content.trim(),
@@ -49,7 +45,6 @@ const Index = () => {
     setMessages((prev) => [...prev, userMessage]);
     setIsTyping(true);
 
-    // Simulate delay for a more natural conversation
     setTimeout(async () => {
       const botResponse = await generateBotResponse(content, messages);
       
@@ -70,7 +65,6 @@ const Index = () => {
       <ChatHeader />
       
       <main className="flex-1 container mx-auto max-w-4xl p-4 flex flex-col">
-        <ApiKeyInput />
         <div className="flex-1 overflow-y-auto mb-4 rounded-lg bg-white shadow-sm p-4 chat-container">
           <div className="space-y-4">
             {messages.map((message) => (
