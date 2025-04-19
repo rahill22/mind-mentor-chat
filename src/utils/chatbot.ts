@@ -1,4 +1,6 @@
 
+import { Message } from "@/pages/Index";
+
 const systemPrompt = `You are Dr. MindMentor, a supportive and empathetic AI mental health assistant. Your responses should be:
 - Compassionate and understanding
 - Professional but warm
