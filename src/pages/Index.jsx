@@ -9,6 +9,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
+// Define and export the Message type
+export const Message = {
+  id: "",
+  content: "",
+  sender: "",
+  timestamp: new Date()
+};
+
 const Index = () => {
   const [messages, setMessages] = useState([
     {
