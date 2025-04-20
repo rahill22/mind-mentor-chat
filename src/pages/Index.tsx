@@ -1,9 +1,13 @@
+
 import { useState, useRef, useEffect } from "react";
 import { ChatHeader } from "@/components/ChatHeader";
 import { ChatInput } from "@/components/ChatInput";
 import { ChatMessage } from "@/components/ChatMessage";
 import { EmergencyContacts } from "@/components/EmergencyContacts";
-import { generateBotResponse } from "@/utils/chatbot";
+import { generateBotResponse, setOpenAIApiKey, getOpenAIApiKey } from "@/utils/chatbot";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export type Message = {
   id: string;
@@ -22,6 +26,8 @@ const Index = () => {
     },
   ]);
   const [isTyping, setIsTyping] = useState(false);
+  const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(!getOpenAIApiKey());
+  const [apiKeyInput, setApiKeyInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -32,8 +38,17 @@ const Index = () => {
     scrollToBottom();
   }, [messages]);
 
+  const handleApiKeySave = () => {
+    setOpenAIApiKey(apiKeyInput.trim());
+    setIsApiKeyModalOpen(false);
+  };
+
   const handleSendMessage = async (content: string) => {
     if (!content.trim()) return;
+    if (!getOpenAIApiKey()) {
+      setIsApiKeyModalOpen(true);
+      return;
+    }
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -89,6 +104,27 @@ const Index = () => {
         <ChatInput onSendMessage={handleSendMessage} isTyping={isTyping} />
         <EmergencyContacts />
       </main>
+
+      <Dialog open={isApiKeyModalOpen} onOpenChange={setIsApiKeyModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>OpenAI API Key Required</DialogTitle>
+            <DialogDescription>
+              Please enter your OpenAI API key to use the chatbot.
+            </DialogDescription>
+          </DialogHeader>
+          <Input 
+            placeholder="Enter your OpenAI API key" 
+            value={apiKeyInput} 
+            onChange={(e) => setApiKeyInput(e.target.value)} 
+          />
+          <DialogFooter>
+            <Button onClick={handleApiKeySave} disabled={!apiKeyInput.trim()}>
+              Save API Key
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
