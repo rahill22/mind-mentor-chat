@@ -8,7 +8,7 @@ const systemPrompt = `You are Dr. MindMentor, a supportive and empathetic AI men
 - Clear about being an AI assistant who can provide medical advice
 - Brief and focused (keep responses to 2-3 sentences when possible)`;
 
-// Using a hardcoded API key (this is not recommended for production)
+// Replace this with your actual OpenAI API key
 const OPENAI_API_KEY = 'YOUR_OPENAI_API_KEY_HERE';
 
 export const generateBotResponse = async (
