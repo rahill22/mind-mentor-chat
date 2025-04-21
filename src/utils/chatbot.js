@@ -8,13 +8,21 @@ const systemPrompt = `You are Dr. MindMentor, a supportive and empathetic AI men
 - Clear about being an AI assistant who can provide medical advice
 - Brief and focused (keep responses to 2-3 sentences when possible)`;
 
-// Replace this with your actual OpenAI API key
-const OPENAI_API_KEY = 'YOUR_OPENAI_API_KEY_HERE';
+export const setOpenAIApiKey = (apiKey) => {
+  localStorage.setItem('OPENAI_API_KEY', apiKey);
+};
 
-export const generateBotResponse = async (
-  userMessage: string,
-  conversationHistory: Message[]
-): Promise<string> => {
+export const getOpenAIApiKey = () => {
+  return localStorage.getItem('OPENAI_API_KEY');
+};
+
+export const generateBotResponse = async (userMessage, conversationHistory) => {
+  const OPENAI_API_KEY = getOpenAIApiKey();
+
+  if (!OPENAI_API_KEY) {
+    return "Please set up your OpenAI API key before continuing.";
+  }
+
   try {
     const messages = [
       { role: "system", content: systemPrompt },
@@ -32,7 +40,7 @@ export const generateBotResponse = async (
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'gpt-4-turbo-preview',
+        model: 'gpt-4o-mini',
         messages,
         temperature: 0.7,
         max_tokens: 150
@@ -49,6 +57,6 @@ export const generateBotResponse = async (
 
   } catch (error) {
     console.error('Error generating response:', error);
-    return "I apologize, but I encountered an error generating a response. Please try again later.";
+    return "I apologize, but I encountered an error generating a response. Please check your API key and try again.";
   }
 };
