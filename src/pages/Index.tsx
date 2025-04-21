@@ -1,24 +1,19 @@
-
 import { useState, useRef, useEffect } from "react";
 import { ChatHeader } from "@/components/ChatHeader";
 import { ChatInput } from "@/components/ChatInput";
 import { ChatMessage } from "@/components/ChatMessage";
 import { EmergencyContacts } from "@/components/EmergencyContacts";
-import { generateBotResponse, setOpenAIApiKey, getOpenAIApiKey } from "@/utils/chatbot";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { generateBotResponse } from "@/utils/chatbot";
 
-// Define and export the Message type
-export const Message = {
-  id: "",
-  content: "",
-  sender: "",
-  timestamp: new Date()
+export type Message = {
+  id: string;
+  content: string;
+  sender: "user" | "bot";
+  timestamp: Date;
 };
 
 const Index = () => {
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
       content: "Hello, I'm Dr. MindMentor, an AI assistant designed to provide mental health support. How are you feeling today?",
@@ -27,9 +22,7 @@ const Index = () => {
     },
   ]);
   const [isTyping, setIsTyping] = useState(false);
-  const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(!getOpenAIApiKey());
-  const [apiKeyInput, setApiKeyInput] = useState('');
-  const messagesEndRef = useRef(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -39,19 +32,10 @@ const Index = () => {
     scrollToBottom();
   }, [messages]);
 
-  const handleApiKeySave = () => {
-    setOpenAIApiKey(apiKeyInput.trim());
-    setIsApiKeyModalOpen(false);
-  };
-
-  const handleSendMessage = async (content) => {
+  const handleSendMessage = async (content: string) => {
     if (!content.trim()) return;
-    if (!getOpenAIApiKey()) {
-      setIsApiKeyModalOpen(true);
-      return;
-    }
 
-    const userMessage = {
+    const userMessage: Message = {
       id: Date.now().toString(),
       content: content.trim(),
       sender: "user",
@@ -64,7 +48,7 @@ const Index = () => {
     setTimeout(async () => {
       const botResponse = await generateBotResponse(content, messages);
       
-      const botMessage = {
+      const botMessage: Message = {
         id: (Date.now() + 1).toString(),
         content: botResponse,
         sender: "bot",
@@ -105,27 +89,6 @@ const Index = () => {
         <ChatInput onSendMessage={handleSendMessage} isTyping={isTyping} />
         <EmergencyContacts />
       </main>
-
-      <Dialog open={isApiKeyModalOpen} onOpenChange={setIsApiKeyModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>OpenAI API Key Required</DialogTitle>
-            <DialogDescription>
-              Please enter your OpenAI API key to use the chatbot.
-            </DialogDescription>
-          </DialogHeader>
-          <Input 
-            placeholder="Enter your OpenAI API key" 
-            value={apiKeyInput} 
-            onChange={(e) => setApiKeyInput(e.target.value)} 
-          />
-          <DialogFooter>
-            <Button onClick={handleApiKeySave} disabled={!apiKeyInput.trim()}>
-              Save API Key
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

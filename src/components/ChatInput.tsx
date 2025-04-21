@@ -4,10 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
 
-export const ChatInput = ({ onSendMessage, isTyping }) => {
+interface ChatInputProps {
+  onSendMessage: (message: string) => void;
+  isTyping: boolean;
+}
+
+export const ChatInput = ({ onSendMessage, isTyping }: ChatInputProps) => {
   const [input, setInput] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim() && !isTyping) {
       onSendMessage(input);
