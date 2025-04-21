@@ -8,15 +8,21 @@ const systemPrompt = `You are Dr. MindMentor, a supportive and empathetic AI men
 - Clear about being an AI assistant who can provide medical advice
 - Brief and focused (keep responses to 2-3 sentences when possible)`;
 
-export const setOpenAIApiKey = (apiKey) => {
+// Function to set the OpenAI API key in localStorage
+export const setOpenAIApiKey = (apiKey: string) => {
   localStorage.setItem('OPENAI_API_KEY', apiKey);
 };
 
-export const getOpenAIApiKey = () => {
+// Function to get the OpenAI API key from localStorage
+export const getOpenAIApiKey = (): string | null => {
   return localStorage.getItem('OPENAI_API_KEY');
 };
 
-export const generateBotResponse = async (userMessage, conversationHistory) => {
+export const generateBotResponse = async (
+  userMessage: string,
+  conversationHistory: Message[]
+): Promise<string> => {
+  // Retrieve the API key from localStorage
   const OPENAI_API_KEY = getOpenAIApiKey();
 
   if (!OPENAI_API_KEY) {

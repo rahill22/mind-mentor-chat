@@ -9,16 +9,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-// Define and export the Message type
-export const Message = {
-  id: "",
-  content: "",
-  sender: "",
-  timestamp: new Date()
+export type Message = {
+  id: string;
+  content: string;
+  sender: "user" | "bot";
+  timestamp: Date;
 };
 
 const Index = () => {
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
       content: "Hello, I'm Dr. MindMentor, an AI assistant designed to provide mental health support. How are you feeling today?",
@@ -29,7 +28,7 @@ const Index = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(!getOpenAIApiKey());
   const [apiKeyInput, setApiKeyInput] = useState('');
-  const messagesEndRef = useRef(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -44,14 +43,14 @@ const Index = () => {
     setIsApiKeyModalOpen(false);
   };
 
-  const handleSendMessage = async (content) => {
+  const handleSendMessage = async (content: string) => {
     if (!content.trim()) return;
     if (!getOpenAIApiKey()) {
       setIsApiKeyModalOpen(true);
       return;
     }
 
-    const userMessage = {
+    const userMessage: Message = {
       id: Date.now().toString(),
       content: content.trim(),
       sender: "user",
@@ -64,7 +63,7 @@ const Index = () => {
     setTimeout(async () => {
       const botResponse = await generateBotResponse(content, messages);
       
-      const botMessage = {
+      const botMessage: Message = {
         id: (Date.now() + 1).toString(),
         content: botResponse,
         sender: "bot",

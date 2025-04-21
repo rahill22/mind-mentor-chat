@@ -1,74 +1,73 @@
+# Welcome to your Lovable project
 
-# Mind Mentor Chat 🧠💬
+## Project info
 
-## Project Overview
+**URL**: https://lovable.dev/projects/47b85726-1786-4a7a-bce1-be6e611af916
 
-Mind Mentor Chat is an AI-powered mental health support application built using React, TypeScript, and OpenAI's GPT technology. The application provides an empathetic conversational interface to offer supportive interactions and mental health guidance.
+## How can I edit this code?
 
-## Features
+There are several ways of editing your application.
 
-- 🤖 AI-powered chatbot with compassionate responses
-- 🔒 Secure API key management
-- 📱 Responsive design
-- 🚨 Emergency contacts integration
-- 💬 Typing indicator and smooth message animations
+**Use Lovable**
 
-## Prerequisites
+Simply visit the [Lovable Project](https://lovable.dev/projects/47b85726-1786-4a7a-bce1-be6e611af916) and start prompting.
 
-- Node.js (v18 or later)
-- npm or yarn
-- OpenAI API Key
+Changes made via Lovable will be committed automatically to this repo.
 
-## Setup and Installation
+**Use your preferred IDE**
 
-1. Clone the repository
-2. Install dependencies:
-```bash
-npm install
-```
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
-3. Run the development server:
-```bash
+The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+
+Follow these steps:
+
+```sh
+# Step 1: Clone the repository using the project's Git URL.
+git clone <YOUR_GIT_URL>
+
+# Step 2: Navigate to the project directory.
+cd <YOUR_PROJECT_NAME>
+
+# Step 3: Install the necessary dependencies.
+npm i
+
+# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
 
-## Configuration
+**Edit a file directly in GitHub**
 
-### OpenAI API Key
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
-The application requires an OpenAI API key. You can:
-- Enter the key directly in the application when prompted
-- The key will be securely stored in local storage
+**Use GitHub Codespaces**
 
-## Technologies Used
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-- React
+## What technologies are used for this project?
+
+This project is built with:
+
+- Vite
 - TypeScript
+- React
+- shadcn-ui
 - Tailwind CSS
-- Shadcn UI
-- OpenAI API
-- React Router
 
-## Environment Setup
+## How can I deploy this project?
 
-No `.env` file is required. API keys are managed through the application's UI.
+Simply open [Lovable](https://lovable.dev/projects/47b85726-1786-4a7a-bce1-be6e611af916) and click on Share -> Publish.
 
-## Deployment
+## Can I connect a custom domain to my Lovable project?
 
-The application can be deployed using Lovable's built-in deployment feature.
+Yes, you can!
 
-## Contributing
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a new Pull Request
-
-## License
-
-This project is open-source.
-
-## Support
-
-For issues or questions, please open a GitHub issue or contact the maintainers.
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)

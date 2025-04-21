@@ -1,8 +1,13 @@
 
 import { cn } from "@/lib/utils";
+import { Message } from "@/pages/Index";
 import { format } from "date-fns";
 
-export const ChatMessage = ({ message }) => {
+interface ChatMessageProps {
+  message: Message;
+}
+
+export const ChatMessage = ({ message }: ChatMessageProps) => {
   const isBot = message.sender === "bot";
 
   return (
